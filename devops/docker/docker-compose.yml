@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  mqtt:
+    build:
+      context: .
+      dockerfile: devops/docker/mqtt.Dockerfile
+    container_name: waste-mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    restart: unless-stopped
+
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    container_name: waste-postgres
+    environment:
+      POSTGRES_DB: waste
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  hub-api:
+    build:
+      context: .
+      dockerfile: devops/docker/api.Dockerfile
+    container_name: waste-hub-api
+    environment:
+      HUB_HOST: 0.0.0.0
+      HUB_PORT: 5000
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: devops/docker/streamlit.Dockerfile
+    container_name: waste-streamlit
+    environment:
+      STREAMLIT_SERVER_PORT: 8501
+    ports:
+      - "8501:8501"
+    depends_on:
+      - hub-api
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: waste-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./devops/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
