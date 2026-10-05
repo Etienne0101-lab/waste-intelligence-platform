@@ -1,0 +1,37 @@
+[
+  {
+    "id": "node-red-flow-waste-telemetry",
+    "label": "Waste Telemetry Processing",
+    "nodes": [
+      {
+        "id": "mqtt-in-telemetry",
+        "type": "mqtt in",
+        "topic": "waste/bin/+/telemetry",
+        "qos": 1,
+        "broker": "mqtt-broker"
+      },
+      {
+        "id": "validate-payload",
+        "type": "function",
+        "func": "if (!msg.payload.sensor_id || !msg.payload.mass_kg) { return null; } return msg;"
+      },
+      {
+        "id": "cluster-aggregator",
+        "type": "function",
+        "func": "// Aggregate readings by cluster_id and forward to hub-api"
+      },
+      {
+        "id": "http-post-hub",
+        "type": "http request",
+        "method": "POST",
+        "url": "http://hub-api:5000/telemetry",
+        "headers": { "Content-Type": "application/json" }
+      }
+    ],
+    "links": [
+      { "source": "mqtt-in-telemetry", "target": "validate-payload" },
+      { "source": "validate-payload", "target": "cluster-aggregator" },
+      { "source": "cluster-aggregator", "target": "http-post-hub" }
+    ]
+  }
+]

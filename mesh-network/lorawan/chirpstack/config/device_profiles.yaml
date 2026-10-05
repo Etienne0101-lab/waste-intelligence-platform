@@ -1,0 +1,11 @@
+# LoRaWAN device profiles for waste-intel bins
+
+device_profiles:
+  - name: waste-bin-v1
+    region: US915
+    class: A
+    activation: OTAA
+    adr_enabled: true
+    dr_min: 0
+    dr_max: 5
+    payload_format: json

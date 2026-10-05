@@ -1,0 +1,23 @@
+# Alert rules for waste intelligence monitoring
+
+groups:
+  - name: waste-intelligence-alerts
+    interval: 30s
+    rules:
+      - alert: BinOverflow
+        expr: fill_level_percent > 95
+        for: 5m
+        annotations:
+          summary: "Bin {{ $labels.bin_id }} overflow risk"
+
+      - alert: FacilityCongestion
+        expr: facility_utilization_percent > 90
+        for: 15m
+        annotations:
+          summary: "Facility {{ $labels.facility_id }} congestion alert"
+
+      - alert: LowBatteryWarning
+        expr: battery_percent < 20
+        for: 10m
+        annotations:
+          summary: "Bin {{ $labels.bin_id }} battery low"
