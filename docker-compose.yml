@@ -1,0 +1,58 @@
+# Root docker-compose for quick local orchestration
+version: "3.9"
+
+services:
+  mqtt:
+    build:
+      context: .
+      dockerfile: devops/docker/mqtt.Dockerfile
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    restart: unless-stopped
+
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    environment:
+      POSTGRES_DB: waste
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  hub-api:
+    build:
+      context: .
+      dockerfile: devops/docker/api.Dockerfile
+    environment:
+      HUB_HOST: 0.0.0.0
+      HUB_PORT: 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: devops/docker/streamlit.Dockerfile
+    ports:
+      - "8501:8501"
+    depends_on:
+      - hub-api
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./devops/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

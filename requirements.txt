@@ -1,0 +1,7 @@
+# Root requirements for Python services
+Flask==3.0.3
+streamlit==1.36.0
+pytest==8.3.3
+pandas==2.2.3
+numpy==2.1.2
+plotly==5.24.1
