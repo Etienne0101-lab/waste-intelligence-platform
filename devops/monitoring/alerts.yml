@@ -1,0 +1,26 @@
+groups:
+  - name: waste-platform-alerts
+    rules:
+      - alert: HighFillLevel
+        expr: fill_level_percent > 95
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Bin fill level critical"
+
+      - alert: RouteDelay
+        expr: avg_route_km > 25
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Route distances exceed expected range"
+
+      - alert: FacilityCongestion
+        expr: facility_load_pct > 90
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Facility operating above recommended utilization"

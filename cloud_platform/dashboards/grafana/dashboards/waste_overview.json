@@ -1,0 +1,33 @@
+{
+  "title": "Waste Intelligence Overview",
+  "type": "stat",
+  "schemaVersion": 1,
+  "version": 1,
+  "refresh": "30s",
+  "templating": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Bins Online",
+      "datasource": "Postgres",
+      "targets": [{ "query": "SELECT COUNT(*) FROM bins;", "rawSql": true }],
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Facility Load %",
+      "datasource": "Postgres",
+      "targets": [{ "query": "SELECT AVG(current_load_kg / capacity_kg * 100) FROM facilities;", "rawSql": true }],
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 }
+    },
+    {
+      "type": "stat",
+      "title": "Diversion Forecast",
+      "datasource": "Postgres",
+      "targets": [{ "query": "SELECT 85.0;", "rawSql": true }],
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 }
+    }
+  ]
+}
