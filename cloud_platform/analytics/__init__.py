@@ -10,3 +10,28 @@ try:
     )
 except ImportError:
     pass
+
+try:
+    from .ml import (
+        ContaminationCNN,
+        ClusterAnomalyDetector,
+        ModelRegistry,
+        MLInferenceEngine,
+    )
+    from .ml.training import (
+        train_contamination_model,
+        train_forecasting_model,
+        train_anomaly_model,
+    )
+    from .ml.utils import (
+        add_lag_features,
+        add_temporal_features,
+        build_spatial_features,
+        compute_classification_metrics,
+        compute_regression_metrics,
+        normalize_numeric_columns,
+        prepare_time_series_dataframe,
+        set_deterministic_seed,
+    )
+except ImportError:
+    pass
